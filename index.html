@@ -22,8 +22,8 @@
 
   <h2>Control Servo ESP32</h2>
 
-  <button onclick="enviarAngulo(190)">Cerrar°</button>
-  <button onclick="enviarAngulo(120)">Abrir°</button>
+  <button onclick="enviarComando('minimo')">Poco</button>
+  <button onclick="enviarComando('maximo')">Mucho</button>
 
   <p id="estado">Desconectado</p>
 
@@ -55,10 +55,10 @@
     });
 
     // ===== BOTONES =====
-    function enviarAngulo(valor) {
+    function enviarComando(valor) {
       if (client.connected) {
-        client.publish(topic, valor.toString());
-        console.log("Ángulo enviado:", valor);
+        client.publish(topic, valor);
+        console.log("Comando enviado:", valor);
       } else {
         alert("No conectado a MQTT");
       }
@@ -67,5 +67,6 @@
 
 </body>
 </html>
+
 
 
