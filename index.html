@@ -2,32 +2,151 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Control Servo ESP32</title>
+  <title>Alimentador de Nina 🐱</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin-top: 50px;
+    :root {
+      --primary: #ff7a7a;
+      --secondary: #ffd36a;
+      --success: #4caf50;
+      --danger: #f44336;
+      --dark: #333;
+      --light: #ffffff;
     }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: linear-gradient(135deg, #ffe6e6, #fff6d6);
+    }
+
+    .card {
+      background: var(--light);
+      padding: 30px 25px;
+      width: 100%;
+      max-width: 380px;
+      border-radius: 20px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+      text-align: center;
+    }
+
+    h1 {
+      margin-top: 0;
+      color: var(--dark);
+      font-size: 26px;
+    }
+
+    .subtitle {
+      color: #666;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+
+    .estado {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      margin-bottom: 25px;
+      background: #ddd;
+      color: #555;
+    }
+
+    .estado.conectado {
+      background: #d4f8d4;
+      color: var(--success);
+      font-weight: bold;
+    }
+
+    .estado.error {
+      background: #ffd6d6;
+      color: var(--danger);
+      font-weight: bold;
+    }
+
+    .botones {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 15px;
+    }
+
     button {
-      font-size: 20px;
-      padding: 15px 30px;
-      margin: 10px;
+      border: none;
+      border-radius: 14px;
+      padding: 16px;
+      font-size: 18px;
       cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      color: #fff;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 18px rgba(0,0,0,0.2);
+    }
+
+    .btn-poco {
+      background: var(--secondary);
+      color: #5a4a00;
+    }
+
+    .btn-mucho {
+      background: var(--primary);
+    }
+
+    .btn-abrir {
+      background: var(--success);
+    }
+
+    .btn-cerrar {
+      background: var(--danger);
+    }
+
+    footer {
+      margin-top: 25px;
+      font-size: 12px;
+      color: #777;
     }
   </style>
 </head>
+
 <body>
 
-  <h2>Control Servo ESP32</h2>
+  <div class="card">
+    <h1>🐱 Alimentador de Nina</h1>
+    <div class="subtitle">Control remoto del dispensador</div>
 
-  <button onclick="enviarComando('minimo')">Poco</button>
-  <button onclick="enviarComando('maximo')">Mucho</button>
-  <button onclick="enviarComando('rellenar')">Rellenar</button>
-  <button onclick="enviarComando('cerrar')">Cerrar</button>
+    <div id="estado" class="estado">Desconectado</div>
 
-  <p id="estado">Desconectado</p>
+    <div class="botones">
+      <button class="btn-poco" onclick="enviarComando('minimo')">
+        🍽️ Poco alimento
+      </button>
+
+      <button class="btn-mucho" onclick="enviarComando('maximo')">
+        🥣 Mucho alimento
+      </button>
+
+      <button class="btn-abrir" onclick="enviarComando('rellenar')">
+        🔓 Abrir compuerta
+      </button>
+
+      <button class="btn-cerrar" onclick="enviarComando('cerrar')">
+        🔒 Cerrar compuerta
+      </button>
+    </div>
+
+    <footer>
+      Hecho con ❤️ para Nina
+    </footer>
+  </div>
 
   <script>
     // ===== DATOS MQTT =====
@@ -40,19 +159,19 @@
 
     const topic = "servo/angulo";
 
+    const estado = document.getElementById("estado");
+
     // ===== CONEXIÓN =====
     const client = mqtt.connect(host, options);
 
-    const estado = document.getElementById("estado");
-
     client.on("connect", () => {
-      estado.innerText = "Conectado a MQTT";
-      estado.style.color = "green";
+      estado.innerText = "Conectado 🟢";
+      estado.className = "estado conectado";
     });
 
     client.on("error", (err) => {
-      estado.innerText = "Error MQTT";
-      estado.style.color = "red";
+      estado.innerText = "Error MQTT 🔴";
+      estado.className = "estado error";
       console.error(err);
     });
 
@@ -69,7 +188,3 @@
 
 </body>
 </html>
-
-
-
-
